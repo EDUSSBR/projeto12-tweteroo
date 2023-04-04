@@ -30,7 +30,7 @@ app.post('/sign-up', (req, res) => {
 
 app.post('/tweets', (req, res) => {
     const { tweet } = req.body
-    const { user: username }  = req.headers
+    const { user: username } = req.headers
     try {
         if (typeof username !== "string" ||
             typeof tweet !== "string" ||
@@ -46,7 +46,7 @@ app.post('/tweets', (req, res) => {
         res.status(201).send("OK")
     } catch (e) {
         console.log(e)
-        if (e==="UNAUTHORIZED"){
+        if (e === "UNAUTHORIZED") {
             res.status(401).json({ message: e })
         } else {
             res.status(400).json({ message: e })
@@ -79,6 +79,19 @@ app.get('/tweets', (req, res) => {
         } else {
             throw "Informe uma página válida!"
         }
+    } catch (e) {
+        res.status(400).json({ message: e })
+    }
+})
+app.get('/tweets/:USERNAME', (req, res) => {
+    const { USERNAME } = req.params;
+    try {
+        const  avatar = users.filter(user => user.username === USERNAME)[0].avatar
+        const userTweets = tweets.filter(item=> item.username===USERNAME).map(item => {
+                return { ...item, avatar }
+        })
+        res.status(200).json(userTweets)
+
     } catch (e) {
         res.status(400).json({ message: e })
     }
