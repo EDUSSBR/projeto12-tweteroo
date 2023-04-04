@@ -28,4 +28,26 @@ app.post('/sign-up', (req, res) => {
     }
 })
 
+app.post('/tweets', (req, res) => {
+    const { tweet } = req.body
+    const { user: username }  = req.headers
+    try {
+        if (typeof username !== "string" ||
+            typeof tweet !== "string" ||
+            !username ||
+            !tweet) {
+            throw "Todos os campos são obrigatórios!"
+        }
+        const userExists = users.filter(item => item.username === username)
+        if (userExists.length === 0) {
+            throw "UNAUTHORIZED"
+        }
+        tweets.unshift({ username, tweet })
+        res.status(201).send("OK")
+    } catch (e) {
+        console.log(e)
+        res.status(401).json({ message: e })
+    }
+})
+
 app.listen(PORT, () => console.log(`Server listening at: ${PORT}`))
