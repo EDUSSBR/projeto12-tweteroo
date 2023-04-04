@@ -49,5 +49,34 @@ app.post('/tweets', (req, res) => {
         res.status(401).json({ message: e })
     }
 })
+app.get('/tweets', (req, res) => {
+    const { page } = req.query;
+    try {
+        if (page === undefined || Number(page) === 1) {
+            const lastTenTweets = tweets.slice(0, 10).map((item) => {
+                let avatar = users.filter(user => user.username === item.username)[0].avatar
+                return { ...item, avatar }
+            })
+            res.status(200).json(lastTenTweets)
+            return
+        } else if (Number(page) > 1) {
+            let initialIndex = page * 10 - 10;
+            let finalIndex = page * 10;
+            const pageInfo = tweets.slice(initialIndex, finalIndex).map((item) => {
+                let avatar = users.filter(user => user.username === item.username)[0].avatar
+                return { ...item, avatar }
+            })
+            if (pageInfo.length === 0) {
+                throw "Informe uma página válida!"
+            } else {
+                res.status(200).json(pageInfo)
+            }
 
+        } else {
+            throw "Informe uma página válida!"
+        }
+    } catch (e) {
+        res.status(400).json({ message: e })
+    }
+})
 app.listen(PORT, () => console.log(`Server listening at: ${PORT}`))
