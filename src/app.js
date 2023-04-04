@@ -46,7 +46,11 @@ app.post('/tweets', (req, res) => {
         res.status(201).send("OK")
     } catch (e) {
         console.log(e)
-        res.status(401).json({ message: e })
+        if (e==="UNAUTHORIZED"){
+            res.status(401).json({ message: e })
+        } else {
+            res.status(400).json({ message: e })
+        }
     }
 })
 app.get('/tweets', (req, res) => {
